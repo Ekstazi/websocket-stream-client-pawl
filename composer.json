@@ -1,0 +1,65 @@
+{
+  "name": "ekstazi/websocket-stream-client-pawl",
+  "description": "ratchet/pawl adapter implementation for websocket stream client.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Maxim Furtuna",
+      "email": "ekstazyst@gmail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/ekstazi/websocket-stream-client-pawl/issues"
+  },
+  "keywords": [
+    "async",
+    "non-blocking",
+    "websocket",
+    "client",
+    "stream",
+    "http",
+    "amp",
+    "amphp",
+    "websocket-client"
+  ],
+  "require": {
+    "php": ">=7.2",
+    "ekstazi/websocket-stream-client": "^1.0",
+    "psr/container": "^1.0",
+    "ratchet/pawl": "dev-drain-event-support",
+    "amphp/react-adapter": "^2.1"
+  },
+  "provide": {
+    "ekstazi/websocket-stream-client-implementation": "1.0"
+  },
+  "require-dev": {
+    "amphp/phpunit-util": "^1.1",
+    "amphp/php-cs-fixer-config": "dev-master",
+    "phpunit/phpunit": "^8 || ^7"
+  },
+  "minimum-stability": "RC",
+  "autoload": {
+    "psr-4": {
+      "ekstazi\\websocket\\stream\\pawl\\": "src"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ekstazi\\websocket\\stream\\pawl\\test\\": "test"
+    }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/Ekstazi/Pawl"
+    }
+  ],
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "phpdbg -qrr vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml",
+    "lint": "php vendor/bin/php-cs-fixer --diff  -v fix"
+  }
+}
