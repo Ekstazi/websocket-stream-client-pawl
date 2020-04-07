@@ -146,4 +146,24 @@ class WebsocketBuilder
             });
         return $this;
     }
+
+    public function measureReadTime(&$time)
+    {
+        $startTime = null;
+        $this->webSocket
+            ->expects(TestCase::once())
+            ->method('pause')
+            ->willReturnCallback(function () use (&$startTime) {
+                $startTime = \microtime(true);
+            });
+
+        $this->webSocket
+            ->expects(TestCase::once())
+            ->method('resume')
+            ->willReturnCallback(function () use (&$time, &$startTime) {
+                $time = (\microtime(true) - $startTime) * 1000;
+            });
+
+        return $this;
+    }
 }

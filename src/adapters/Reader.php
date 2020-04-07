@@ -37,8 +37,10 @@ class Reader implements InputStream
     private function attachHandlers()
     {
         $this->webSocket->on("message", function (string $chunk) {
-            // @todo pause/resume
-            $this->emitter->emit($chunk);
+            $this->webSocket->pause();
+            $this->emitter->emit($chunk)->onResolve(function () {
+                $this->webSocket->resume();
+            });
         });
 
         $this->webSocket->on("error", function (\Throwable $error) {

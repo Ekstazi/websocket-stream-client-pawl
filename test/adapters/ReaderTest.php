@@ -3,6 +3,7 @@
 namespace ekstazi\websocket\stream\pawl\test\adapters;
 
 use Amp\ByteStream\InputStream;
+use Amp\Delayed;
 use Amp\PHPUnit\AsyncTestCase;
 use ekstazi\websocket\stream\pawl\adapters\Reader;
 use Ratchet\Client\WebSocket;
@@ -32,6 +33,21 @@ class ReaderTest extends AsyncTestCase
         $reader = new Reader($client);
         $data = yield $reader->read();
         self::assertEquals('test', $data);
+    }
+
+    public function testReadBackpressure()
+    {
+        $builder = new WebsocketBuilder($this->createMock(WebSocket::class));
+        $client = $builder
+            ->deferMessageEvent()
+            ->measureReadTime($time)
+            ->build();
+
+        $reader = new Reader($client);
+        yield new Delayed(1000);
+        $data = yield $reader->read();
+        self::assertEquals('test', $data);
+        self::assertGreaterThanOrEqual(-100, $time - 1000);
     }
 
     public function testReadCloseSuccess()
