@@ -1,50 +1,10 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl;
+namespace ekstazi\websocket\client\pawl;
 
-use Amp\Promise;
-use ekstazi\websocket\stream\pawl\adapters\Reader;
-use ekstazi\websocket\stream\pawl\adapters\Writer;
-use ekstazi\websocket\stream\Stream;
+use ekstazi\websocket\client\Connection as ConnectionInterface;
+use ekstazi\websocket\common\internal\Connection as BaseConnection;
 
-class Connection implements Stream
+final class Connection extends BaseConnection implements ConnectionInterface
 {
-    /**
-     * @var Reader
-     */
-    private $reader;
-    /**
-     * @var Writer
-     */
-    private $writer;
-
-    public function __construct(Reader $reader, Writer $writer)
-    {
-        $this->reader = $reader;
-        $this->writer = $writer;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function read(): Promise
-    {
-        return $this->reader->read();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function write(string $data): Promise
-    {
-        return $this->writer->write($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function end(string $finalData = ""): Promise
-    {
-        return $this->writer->end($finalData);
-    }
 }

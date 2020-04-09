@@ -1,11 +1,11 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\test\adapters;
+namespace ekstazi\websocket\client\pawl\test\adapters;
 
 use Amp\ByteStream\InputStream;
 use Amp\Delayed;
 use Amp\PHPUnit\AsyncTestCase;
-use ekstazi\websocket\stream\pawl\adapters\Reader;
+use ekstazi\websocket\client\pawl\adapters\Reader;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\Frame;
 

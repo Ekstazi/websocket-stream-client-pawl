@@ -1,12 +1,12 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl;
+namespace ekstazi\websocket\client\pawl;
 
-use ekstazi\websocket\stream\ConnectionFactory;
+use ekstazi\websocket\client\ConnectionFactory;
 use Psr\Container\ContainerInterface;
 use Ratchet\Client\Connector as PawlConnector;
 
-class ConnectorFactory
+final class ConnectorFactory
 {
     public function __invoke(ContainerInterface $container): ConnectionFactory
     {

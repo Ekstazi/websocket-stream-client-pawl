@@ -1,15 +1,15 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\adapters;
+namespace ekstazi\websocket\client\pawl\adapters;
 
-use Amp\ByteStream\InputStream;
 use Amp\ByteStream\IteratorStream;
 use Amp\Emitter;
 use Amp\Promise;
+use ekstazi\websocket\common\Reader as ReaderInterface;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\Frame;
 
-class Reader implements InputStream
+final class Reader implements ReaderInterface
 {
     /**
      * @var WebSocket

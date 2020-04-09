@@ -1,10 +1,10 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\test;
+namespace ekstazi\websocket\client\pawl\test;
 
 use Amp\ReactAdapter\ReactAdapter;
-use ekstazi\websocket\stream\ConnectionFactory;
-use ekstazi\websocket\stream\pawl\ConnectorFactory;
+use ekstazi\websocket\client\ConnectionFactory;
+use ekstazi\websocket\client\pawl\ConnectorFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Ratchet\Client\Connector as PawlConnector;

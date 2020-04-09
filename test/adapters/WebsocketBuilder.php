@@ -1,6 +1,6 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\test\adapters;
+namespace ekstazi\websocket\client\pawl\test\adapters;
 
 use Amp\Loop;
 use PHPUnit\Framework\Assert;

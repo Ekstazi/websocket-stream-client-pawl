@@ -1,19 +1,20 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\adapters;
+namespace ekstazi\websocket\client\pawl\adapters;
 
-use Amp\ByteStream\OutputStream;
 use Amp\Deferred;
 use Amp\Failure;
 use Amp\Promise;
 use Amp\Success;
-use ekstazi\websocket\stream\ConnectionFactory;
+use ekstazi\websocket\common\internal\SetModeTrait;
+use ekstazi\websocket\common\Writer as WriterInterface;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\Frame;
 use function Amp\call;
 
-class Writer implements OutputStream
+final class Writer implements WriterInterface
 {
+    use SetModeTrait;
     /**
      * @var WebSocket
      */
@@ -33,15 +34,22 @@ class Writer implements OutputStream
      */
     private $backpressure;
 
-    public function __construct(WebSocket $webSocket, string $mode = ConnectionFactory::MODE_BINARY)
+    public function __construct(WebSocket $webSocket, string $defaultMode = self::MODE_BINARY)
     {
         $this->webSocket = $webSocket;
-
-        $this->frameType = $mode == ConnectionFactory::MODE_BINARY
-            ? Frame::OP_BINARY
-            : Frame::OP_TEXT;
-
+        $this->setDefaultMode($defaultMode);
         $this->attachHandlers();
+    }
+
+    private function getFrameOpCodeByMode(string $mode): int
+    {
+        switch ($mode) {
+            case self::MODE_BINARY:
+                return Frame::OP_BINARY;
+
+            case self::MODE_TEXT:
+                return Frame::OP_TEXT;
+        }
     }
 
     private function attachHandlers()
@@ -60,13 +68,16 @@ class Writer implements OutputStream
     }
 
     /** @inheritdoc */
-    public function write(string $data): Promise
+    public function write(string $data, string $mode = null): Promise
     {
+        $mode = $mode ?? $this->defaultMode;
+        $this->guardValidMode($mode);
+
         if ($this->error) {
             return new Failure($this->error);
         }
 
-        $shouldStop = $this->webSocket->send(new Frame($data, true, $this->frameType));
+        $shouldStop = $this->webSocket->send(new Frame($data, true, $this->getFrameOpCodeByMode($mode)));
 
         if ($shouldStop) {
             return new Success();
@@ -81,15 +92,15 @@ class Writer implements OutputStream
     }
 
     /** @inheritdoc */
-    public function end(string $finalData = ""): Promise
+    public function end(string $finalData = "", string $mode = null): Promise
     {
-        return call(function () use ($finalData) {
+        return call(function () use ($finalData, $mode) {
             if ($this->error) {
                 return new Failure($this->error);
             }
 
             if ($finalData) {
-                yield $this->write($finalData);
+                yield $this->write($finalData, $mode);
             }
 
             $deferred = new Deferred;

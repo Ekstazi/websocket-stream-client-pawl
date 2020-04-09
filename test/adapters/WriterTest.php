@@ -1,12 +1,11 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\test\adapters;
+namespace ekstazi\websocket\client\pawl\test\adapters;
 
 use Amp\ByteStream\OutputStream;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
-use ekstazi\websocket\stream\ConnectionFactory;
-use ekstazi\websocket\stream\pawl\adapters\Writer;
+use ekstazi\websocket\client\pawl\adapters\Writer;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\Frame;
 
@@ -51,10 +50,10 @@ class WriterTest extends AsyncTestCase
         $builder = new WebsocketBuilder($this->stubWebsocket());
         $builder->expectSend($expectedOpCode, false);
 
-        $writer = new Writer($builder->build(), $mode);
+        $writer = new Writer($builder->build());
 
         $startTime = \microtime(true);
-        yield $writer->write('test');
+        yield $writer->write('test', $mode);
         $endTime = \microtime(true);
 
         self::assertGreaterThan(1, $endTime - $startTime);
@@ -75,8 +74,8 @@ class WriterTest extends AsyncTestCase
     public function writeModes()
     {
         return [
-            'binary' => [ConnectionFactory::MODE_BINARY, Frame::OP_BINARY],
-            'text' => [ConnectionFactory::MODE_TEXT, Frame::OP_TEXT],
+            'binary' => [Writer::MODE_BINARY, Frame::OP_BINARY],
+            'text' => [Writer::MODE_TEXT, Frame::OP_TEXT],
         ];
     }
 
@@ -131,6 +130,9 @@ class WriterTest extends AsyncTestCase
         yield $writer->end('test');
     }
 
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|WebSocket
+     */
     private function stubWebsocket()
     {
         return $this->createMock(WebSocket::class);

@@ -1,19 +1,19 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl;
+namespace ekstazi\websocket\client\pawl;
 
 use Amp\Promise;
 use Amp\ReactAdapter\ReactAdapter;
-use ekstazi\websocket\stream\ConnectionFactory;
-use ekstazi\websocket\stream\pawl\adapters\Reader;
-use ekstazi\websocket\stream\pawl\adapters\Writer;
+use ekstazi\websocket\client\ConnectionFactory;
+use ekstazi\websocket\client\pawl\adapters\Reader;
+use ekstazi\websocket\client\pawl\adapters\Writer;
 
 use Psr\Http\Message\RequestInterface;
 use Ratchet\Client\Connector as PawlConnector;
 use Ratchet\Client\WebSocket;
 use function Amp\call;
 
-class Connector implements ConnectionFactory
+final class Connector implements ConnectionFactory
 {
     /**
      * @var PawlConnector
@@ -25,7 +25,7 @@ class Connector implements ConnectionFactory
         $this->connector = $connector ?? new PawlConnector(ReactAdapter::get());
     }
 
-    public function connect(RequestInterface $request, string $mode = self::MODE_BINARY): Promise
+    public function connect(RequestInterface $request, string $mode = Connection::MODE_BINARY): Promise
     {
         return call(function () use ($request, $mode) {
             /** @var WebSocket $connection */

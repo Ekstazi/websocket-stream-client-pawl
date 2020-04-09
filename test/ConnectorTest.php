@@ -1,12 +1,12 @@
 <?php
 
-namespace ekstazi\websocket\stream\pawl\test;
+namespace ekstazi\websocket\client\pawl\test;
 
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
-use ekstazi\websocket\stream\ConnectionFactory;
-use ekstazi\websocket\stream\pawl\Connector;
-use ekstazi\websocket\stream\Stream;
+use ekstazi\websocket\client\ConnectionFactory;
+use ekstazi\websocket\client\pawl\Connection;
+use ekstazi\websocket\client\pawl\Connector;
 use Psr\Http\Message\RequestInterface;
 
 use Psr\Http\Message\UriInterface;
@@ -60,7 +60,7 @@ class ConnectorTest extends AsyncTestCase
         $connector = new Connector($client);
         $connection = yield $connector->connect($request);
 
-        self::assertInstanceOf(Stream::class, $connection);
+        self::assertInstanceOf(Connection::class, $connection);
     }
 
     /**
