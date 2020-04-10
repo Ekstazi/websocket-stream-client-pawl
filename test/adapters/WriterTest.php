@@ -3,6 +3,8 @@
 namespace ekstazi\websocket\client\pawl\test\adapters;
 
 use Amp\ByteStream\OutputStream;
+use Amp\ByteStream\StreamException;
+use Amp\Delayed;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
 use ekstazi\websocket\client\pawl\adapters\Writer;
@@ -66,8 +68,21 @@ class WriterTest extends AsyncTestCase
 
         $writer = new Writer($builder->build());
 
-        $this->expectException(\Exception::class);
+        $this->expectException(StreamException::class);
         $this->expectExceptionMessage('test');
+        yield $writer->write('test');
+    }
+
+    public function testWriteAfterClose()
+    {
+        $builder = new WebsocketBuilder($this->stubWebsocket());
+        $builder->deferCloseEvent();
+
+        $writer = new Writer($builder->build());
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The stream was closed. ');
+        yield new Delayed(0);
         yield $writer->write('test');
     }
 

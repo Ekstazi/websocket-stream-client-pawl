@@ -2,6 +2,8 @@
 
 namespace ekstazi\websocket\client\pawl\adapters;
 
+use Amp\ByteStream\ClosedException;
+use Amp\ByteStream\StreamException;
 use Amp\Deferred;
 use Amp\Failure;
 use Amp\Promise;
@@ -55,7 +57,11 @@ final class Writer implements WriterInterface
     private function attachHandlers()
     {
         $this->webSocket->on("error", function (\Throwable $error) use (&$deferred) {
-            $this->error = $error;
+            $this->error = new StreamException($error->getMessage(), $error->getCode(), $error);
+        });
+
+        $this->webSocket->on("close", function ($code, $reason) use (&$deferred) {
+            $this->error = new ClosedException("The stream was closed. " . $reason, $code);
         });
 
         $this->webSocket->on("drain", function () {
@@ -107,9 +113,9 @@ final class Writer implements WriterInterface
 
             $this->webSocket->on("close", function (int $code, string $reason) use ($deferred) {
                 if ($code !== Frame::CLOSE_NORMAL) {
-                    $this->error = new \Exception($reason, $code);
+                    $this->error = new ClosedException("Underlying connection closed" . $reason, $code);
                 }
-                if ($this->error) {
+                if ($code !== Frame::CLOSE_NORMAL) {
                     $deferred->fail($this->error);
                 } else {
                     $deferred->resolve();

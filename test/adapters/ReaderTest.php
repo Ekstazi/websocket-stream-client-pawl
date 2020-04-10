@@ -2,7 +2,9 @@
 
 namespace ekstazi\websocket\client\pawl\test\adapters;
 
+use Amp\ByteStream\ClosedException;
 use Amp\ByteStream\InputStream;
+use Amp\ByteStream\StreamException;
 use Amp\Delayed;
 use Amp\PHPUnit\AsyncTestCase;
 use ekstazi\websocket\client\pawl\adapters\Reader;
@@ -72,7 +74,7 @@ class ReaderTest extends AsyncTestCase
 
         $reader = new Reader($client);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(ClosedException::class);
         $this->expectExceptionMessage('test error');
         $this->expectExceptionCode(Frame::CLOSE_ABNORMAL);
         $data = yield $reader->read();
@@ -87,7 +89,7 @@ class ReaderTest extends AsyncTestCase
 
         $reader = new Reader($client);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(StreamException::class);
         $this->expectExceptionMessage('test');
         $data = yield $reader->read();
     }

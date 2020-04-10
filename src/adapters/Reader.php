@@ -2,7 +2,9 @@
 
 namespace ekstazi\websocket\client\pawl\adapters;
 
+use Amp\ByteStream\ClosedException;
 use Amp\ByteStream\IteratorStream;
+use Amp\ByteStream\StreamException;
 use Amp\Emitter;
 use Amp\Promise;
 use ekstazi\websocket\common\Reader as ReaderInterface;
@@ -47,7 +49,7 @@ final class Reader implements ReaderInterface
             if ($this->emitter) {
                 $emitter = $this->emitter;
                 $this->emitter = null;
-                $emitter->fail($error);
+                $emitter->fail(new StreamException($error->getMessage(), $error->getCode(), $error));
             }
         });
 
@@ -59,7 +61,7 @@ final class Reader implements ReaderInterface
             $emitter = $this->emitter;
             $this->emitter = null;
             if ($code !== Frame::CLOSE_NORMAL) {
-                $emitter->fail(new \Exception($reason, $code));
+                $emitter->fail(new ClosedException($reason, $code));
             } else {
                 $emitter->complete();
             }
